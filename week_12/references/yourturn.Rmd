@@ -1,0 +1,12 @@
+---
+title: "Example Paper With References - Your Turn"
+author: "Kelsie Ferin"
+date: "November 9, 2016"
+output: html_document
+bibliography: bib.bib
+---
+
+#Introduction
+These are some papers that look interesting to me, @challinoretal2014projyields and @leakeyetal2009elevatedco2.
+
+#References
