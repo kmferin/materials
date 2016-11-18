@@ -9,8 +9,9 @@ knitr::opts_chunk$set(
 library('rvest')
 url <- paste0(
   "https://www.wunderground.com/history/airport/",
-  "KAMW/2016/11/15/DailyHistory.html"
+  "KIKV/2016/11/16/DailyHistory.html"
 )
+
 weather_data <- read_html(url)
 head(html_table(weather_data)[[1]])
 
