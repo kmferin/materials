@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Modeling Basics</title>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="slides_model_basics_files\rmdshower/node_modules/shower-ribbon/styles/screen-4x3.css">
+  <link rel="stylesheet" href="slides_model_basics_files\rmdshower/style-common.css">
+  <link rel="stylesheet" href="slides_model_basics_files\rmdshower/style-ribbon.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.5.1/katex.min.js"></script>
+  <script src="slides_model_basics_files\rmdshower/auto-render.min.js" type="text/javascript"></script>
+  
+  
+    <style type="text/css">
+   div.sourceCode { overflow-x: auto; }
+   table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+     margin: 0; padding: 0; vertical-align: baseline; border: none; }
+   table.sourceCode { width: 100%; line-height: 100%; }
+   td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+   td.sourceCode { padding-left: 5px; }
+   code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+   code > span.dt { color: #902000; } /* DataType */
+   code > span.dv { color: #40a070; } /* DecVal */
+   code > span.bn { color: #40a070; } /* BaseN */
+   code > span.fl { color: #40a070; } /* Float */
+   code > span.ch { color: #4070a0; } /* Char */
+   code > span.st { color: #4070a0; } /* String */
+   code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+   code > span.ot { color: #007020; } /* Other */
+   code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+   code > span.fu { color: #06287e; } /* Function */
+   code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+   code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+   code > span.cn { color: #880000; } /* Constant */
+   code > span.sc { color: #4070a0; } /* SpecialChar */
+   code > span.vs { color: #4070a0; } /* VerbatimString */
+   code > span.ss { color: #bb6688; } /* SpecialString */
+   code > span.im { } /* Import */
+   code > span.va { color: #19177c; } /* Variable */
+   code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+   code > span.op { color: #666666; } /* Operator */
+   code > span.bu { } /* BuiltIn */
+   code > span.ex { } /* Extension */
+   code > span.pp { color: #bc7a00; } /* Preprocessor */
+   code > span.at { color: #7d9029; } /* Attribute */
+   code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+   code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+   code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+   code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  
+  
+  
+</head>
+
+<body class="shower list">
+
+  <header class="caption">
+    <h1>Modeling Basics</h1>
+    <p>Ranae Dietzel and Andee Kaplan</p>
+  </header>
+
+    
+  
+<section id="modeling-basics" class="slide level2">
+<h2>Modeling Basics</h2>
+<center>
+<img src="images/model.gif" width="800px"/>
+</center>
+</section>
+<section id="why-model" class="slide level2">
+<h2>Why model?</h2>
+<ul>
+<li>Modeling helps you identify trends, make predictions, and perform statistical tests<br />
+</li>
+<li>Today we will only touch on modeling and do so in the context of tools we have already learned</li>
+</ul>
+<p>We will be going over Chapter 23 of <a href="http://r4ds.had.co.nz/model-basics.html">R for Data Science</a> by Garrett Grolemund and Hadley Wickham almost verbatim.</p>
+</section>
+<section id="modeling-for-eda" class="slide level2">
+<h2>Modeling for EDA</h2>
+<ul>
+<li>Use models to partition data into patterns and residuals<br />
+</li>
+<li>Strong patterns will hide subtler trends, use models to peel back layers of structure as you explore a dataset</li>
+</ul>
+</section>
+<section id="very-very-very-basics-of-how-models-work" class="slide level2">
+<h2>Very, very, very basics of how models work</h2>
+<p>First, define a <em>family of models</em> that express a precise, but generic, pattern that you want to capture.</p>
+<ul>
+<li>For example, a straight line expressed <code>y = a_1 * x + a_2</code></li>
+<li><code>x</code> and <code>y</code> are known variable from your data and <code>a_1</code> and <code>a_2</code> are parameters that can vary to capture different patterns</li>
+</ul>
+</section>
+<section id="very-very-very-basics-of-how-models-work-1" class="slide level2">
+<h2>Very, very, very basics of how models work</h2>
+<p>Next, generate a <em>fitted model</em> by finding the model from the family that is the closest to your data.</p>
+<ul>
+<li>This takes the generic model family and makes it specific, like <code>y = 3 * x + 7</code>.</li>
+</ul>
+<p>A fitted model is just the closest model from a family of models. This does not necessarily mean it is good and does not imply the model is “true”.</p>
+</section>
+<section id="prerequisites" class="slide level2">
+<h2>Prerequisites</h2>
+<p>Today we’ll use the modelr package which wraps around base R’s modelling functions to make them work naturally in a pipe.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(tidyverse)
+
+<span class="kw">library</span>(modelr)
+<span class="kw">options</span>(<span class="dt">na.action =</span> na.warn)</code></pre></div>
+</section>
+<section id="a-simple-model" class="slide level2">
+<h2>A simple model</h2>
+<p>Lets take a look at the simulated dataset <code>sim1</code>. It contains two continuous variables, <code>x</code> and <code>y</code>. Let’s plot them to see how they’re related:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(sim1, <span class="kw">aes</span>(x, y)) +<span class="st"> </span>
+<span class="st">  </span><span class="kw">geom_point</span>()</code></pre></div>
+<p><img src="slides_model_basics_files/figure-revealjs/unnamed-chunk-1-1.png" width="384" /></p>
+</section>
+<section id="a-simple-model-1" class="slide level2">
+<h2>A simple model</h2>
+<p>In this case, the relationship looks linear, i.e. <code>y = a_0 + a_1 * x</code>. Let’s start by getting a feel for what models from that family look like by randomly generating a few and overlaying them on the data. <img src="slides_model_basics_files/figure-revealjs/unnamed-chunk-2-1.png" width="384" /></p>
+</section>
+<section id="a-simple-model-2" class="slide level2">
+<h2>A simple model</h2>
+<p><img src="slides_model_basics_files/figure-revealjs/unnamed-chunk-3-1.png" width="384" /></p>
+<p>Most of these models are very bad. If we can quantify the distance between the data and each model, we can get a better idea of which models are better.</p>
+</section>
+<section id="section" class="slide level2">
+<h2></h2>
+<p>One place to start is to find the vertical distance between each point and the model, as in the following diagram.</p>
+<p><img src="slides_model_basics_files/figure-revealjs/unnamed-chunk-4-1.png" width="384" /></p>
+<p>This distance is the difference between the y value given by the model, and the actual y value in the data.</p>
+</section>
+<section id="section-1" class="slide level2">
+<h2></h2>
+<p>To compute this distance, we first turn our model family into an R function. This takes the model parameters and the data as inputs, and gives values predicted by the model as output:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">model1 &lt;-<span class="st"> </span>function(a, data) {
+  a[<span class="dv">1</span>] +<span class="st"> </span>data$x *<span class="st"> </span>a[<span class="dv">2</span>]
+}
+<span class="kw">model1</span>(<span class="kw">c</span>(<span class="dv">7</span>, <span class="fl">1.5</span>), sim1)</code></pre></div>
+<pre><code>##  [1]  8.5  8.5  8.5 10.0 10.0 10.0 11.5 11.5 11.5 13.0 13.0 13.0 14.5 14.5
+## [15] 14.5 16.0 16.0 16.0 17.5 17.5 17.5 19.0 19.0 19.0 20.5 20.5 20.5 22.0
+## [29] 22.0 22.0</code></pre>
+</section>
+<section id="section-2" class="slide level2">
+<h2></h2>
+<p>Next, we need some way to compute an overall distance between the predicted and actual values. In other words, the plot above shows 30 distances: how do we collapse that into a single number?</p>
+<p>We will use the “root-mean-squared deviation”. We compute the difference between actual and predicted, square them, average them, and the take the square root.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">measure_distance &lt;-<span class="st"> </span>function(mod, data) {
+  diff &lt;-<span class="st"> </span>data$y -<span class="st"> </span><span class="kw">model1</span>(mod, data)
+  <span class="kw">sqrt</span>(<span class="kw">mean</span>(diff ^<span class="st"> </span><span class="dv">2</span>))
+}
+<span class="kw">measure_distance</span>(<span class="kw">c</span>(<span class="dv">7</span>, <span class="fl">1.5</span>), sim1)</code></pre></div>
+<pre><code>## [1] 2.665212</code></pre>
+</section>
+<section id="purrr" class="slide level2">
+<h2><code>purrr</code></h2>
+<p>Now we can use purrr to compute the distance for all the models defined above. We need a helper function because our distance function expects the model as a numeric vector of length 2.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sim1_dist &lt;-<span class="st"> </span>function(a1, a2) {
+  <span class="kw">measure_distance</span>(<span class="kw">c</span>(a1, a2), sim1)
+}
+
+models &lt;-<span class="st"> </span>models %&gt;%<span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">dist =</span> purrr::<span class="kw">map2_dbl</span>(a1, a2, sim1_dist))
+models</code></pre></div>
+<pre><code>## # A tibble: 250 × 3
+##            a1        a2      dist
+##         &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+## 1   -1.862446 -1.887522 30.041522
+## 2  -13.060192 -2.291445 43.068437
+## 3   25.709318 -3.996407 21.093813
+## 4   38.056373 -3.500355 16.422965
+## 5   -6.607000  1.205726 15.813099
+## 6   -8.747213 -2.877722 42.559429
+## 7  -11.359571  3.159386 10.230428
+## 8   -9.494538  3.888237  6.739263
+## 9   -4.241306  4.442809  8.584836
+## 10  36.646607  2.272369 33.713600
+## # ... with 240 more rows</code></pre>
+</section>
+<section id="section-3" class="slide level2">
+<h2></h2>
+<p>Next, let’s overlay the 10 best models on to the data. The models are colored by <code>-dist</code>to make sure that the best models (i.e. the ones with the smallest distance) get the brighest colours.</p>
+<p><img src="slides_model_basics_files/figure-revealjs/unnamed-chunk-8-1.png" width="384" /></p>
+</section>
+<section id="section-4" class="slide level2">
+<h2></h2>
+<p>We can also think about these models as observations, and visualising with a scatterplot of <code>a1</code> vs <code>a2</code>, again coloured by <code>-dist</code>.</p>
+<p><img src="slides_model_basics_files/figure-revealjs/unnamed-chunk-9-1.png" width="768" /></p>
+</section>
+<section id="grid-search" class="slide level2">
+<h2>Grid search</h2>
+<p>Instead of trying lots of random models, we could be more systematic and generate an evenly spaced grid of points (this is called a grid search). Parameters of the grid were roughly picked by looking at where the best models were in the previous plot.</p>
+</section>
+<section id="grid-search-1" class="slide level2">
+<h2>Grid search</h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">grid &lt;-<span class="st"> </span><span class="kw">expand.grid</span>(
+  <span class="dt">a1 =</span> <span class="kw">seq</span>(-<span class="dv">5</span>, <span class="dv">20</span>, <span class="dt">length =</span> <span class="dv">25</span>),
+  <span class="dt">a2 =</span> <span class="kw">seq</span>(<span class="dv">1</span>, <span class="dv">3</span>, <span class="dt">length =</span> <span class="dv">25</span>)
+  ) %&gt;%<span class="st"> </span>
+<span class="st">  </span><span class="kw">mutate</span>(<span class="dt">dist =</span> purrr::<span class="kw">map2_dbl</span>(a1, a2, sim1_dist))</code></pre></div>
+<p><img src="slides_model_basics_files/figure-revealjs/unnamed-chunk-11-1.png" width="576" /></p>
+</section>
+<section id="section-5" class="slide level2">
+<h2></h2>
+<p>When you overlay the best 10 models back on the original data, they all look pretty good:</p>
+<p><img src="slides_model_basics_files/figure-revealjs/unnamed-chunk-12-1.png" width="768" /></p>
+</section>
+<section id="optim" class="slide level2">
+<h2><code>optim()</code></h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">best &lt;-<span class="st"> </span><span class="kw">optim</span>(<span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">0</span>), measure_distance, <span class="dt">data =</span> sim1)
+best$par</code></pre></div>
+<pre><code>## [1] 4.222248 2.051204</code></pre>
+<p><img src="slides_model_basics_files/figure-revealjs/unnamed-chunk-14-1.png" width="576" /></p>
+</section>
+<section id="visualizing-models" class="slide level2">
+<h2>Visualizing models</h2>
+<ul>
+<li>Predictive models provide predicted data (obviously)<br />
+</li>
+<li>These data can be added to a dataframe and then treated like any other data</li>
+</ul>
+</section>
+<section id="predictions" class="slide level2">
+<h2>Predictions</h2>
+<p>To visualise the predictions from a model, we start by generating an evenly spaced grid of values that covers the region where our data lies. The easiest way to do that is to use <code>modelr::data_grid()</code>. Its first argument is a data frame, and for each subsequent argument it finds the unique variables and then generates all combinations:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">grid &lt;-<span class="st"> </span>sim1 %&gt;%<span class="st"> </span>
+<span class="st">  </span><span class="kw">data_grid</span>(x) 
+grid</code></pre></div>
+<pre><code>## # A tibble: 10 × 1
+##        x
+##    &lt;int&gt;
+## 1      1
+## 2      2
+## 3      3
+## 4      4
+## 5      5
+## 6      6
+## 7      7
+## 8      8
+## 9      9
+## 10    10</code></pre>
+</section>
+<section id="predictions-1" class="slide level2">
+<h2>Predictions</h2>
+<p>Next we add predictions. We’ll use <code>modelr::add_predictions()</code> which takes a dataframe and a model. It adds the predictions from the model to a new column in the dataframe:</p>
+<pre><code>## (Intercept)           x 
+##    4.220822    2.051533</code></pre>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">grid &lt;-<span class="st"> </span>grid %&gt;%<span class="st"> </span>
+<span class="st">  </span><span class="kw">add_predictions</span>(sim1_mod) 
+grid</code></pre></div>
+<pre><code>## # A tibble: 10 × 2
+##        x      pred
+##    &lt;int&gt;     &lt;dbl&gt;
+## 1      1  6.272355
+## 2      2  8.323888
+## 3      3 10.375421
+## 4      4 12.426954
+## 5      5 14.478487
+## 6      6 16.530020
+## 7      7 18.581553
+## 8      8 20.633087
+## 9      9 22.684620
+## 10    10 24.736153</code></pre>
+<p>(You can also use this function to add predictions to your original dataset.)</p>
+</section>
+<section id="section-6" class="slide level2">
+<h2></h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(sim1, <span class="kw">aes</span>(x)) +
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">y =</span> y)) +
+<span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">y =</span> pred), <span class="dt">data =</span> grid, <span class="dt">colour =</span> <span class="st">&quot;red&quot;</span>, <span class="dt">size =</span> <span class="dv">1</span>)</code></pre></div>
+<p><img src="slides_model_basics_files/figure-revealjs/unnamed-chunk-18-1.png" width="768" /></p>
+</section>
+<section id="residuals" class="slide level2">
+<h2>Residuals</h2>
+<p>The flip-side of predictions are <strong>residuals</strong>. The predictions tells you the pattern that the model has captured, and the residuals tell you what the model has missed. The residuals are just the distances between the observed and predicted values that we computed above.</p>
+</section>
+<section id="residuals-1" class="slide level2">
+<h2>Residuals</h2>
+<p>We add residuals to the data with <code>add_residuals()</code>, which works much like <code>add_predictions()</code>. Note, however, that we use the original dataset, not a manufactured grid. This is because to compute residuals we need actual y values.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">sim1 &lt;-<span class="st"> </span>sim1 %&gt;%<span class="st"> </span>
+<span class="st">  </span><span class="kw">add_residuals</span>(sim1_mod)
+sim1</code></pre></div>
+<pre><code>## # A tibble: 30 × 3
+##        x         y        resid
+##    &lt;int&gt;     &lt;dbl&gt;        &lt;dbl&gt;
+## 1      1  4.199913 -2.072442018
+## 2      1  7.510634  1.238279125
+## 3      1  2.125473 -4.146882207
+## 4      2  8.988857  0.664969362
+## 5      2 10.243105  1.919217378
+## 6      2 11.296823  2.972935148
+## 7      3  7.356365 -3.019056466
+## 8      3 10.505349  0.129928252
+## 9      3 10.511601  0.136179642
+## 10     4 12.434589  0.007634878
+## # ... with 20 more rows</code></pre>
+</section>
+<section id="residuals-2" class="slide level2">
+<h2>Residuals</h2>
+<p>Drawing a frequency polygon helps us understand the spread of the residuals:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(sim1, <span class="kw">aes</span>(resid)) +<span class="st"> </span>
+<span class="st">  </span><span class="kw">geom_freqpoly</span>(<span class="dt">binwidth =</span> <span class="fl">0.5</span>)</code></pre></div>
+<p><img src="slides_model_basics_files/figure-revealjs/unnamed-chunk-20-1.png" width="576" /></p>
+</section>
+<section id="section-7" class="slide level2">
+<h2></h2>
+<p>You’ll often want to recreate plots using the residuals instead of the original predictor.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(sim1, <span class="kw">aes</span>(x, resid)) +<span class="st"> </span>
+<span class="st">  </span><span class="kw">geom_ref_line</span>(<span class="dt">h =</span> <span class="dv">0</span>) +
+<span class="st">  </span><span class="kw">geom_point</span>() </code></pre></div>
+<p><img src="slides_model_basics_files/figure-revealjs/unnamed-chunk-21-1.png" width="576" /></p>
+<p>This looks like random noise, suggesting that our model has done a good job of capturing the patterns in the dataset.</p>
+</section>
+<section id="model_matrix" class="slide level2">
+<h2><code>model_matrix</code></h2>
+<p>Takes a dataframe and a formula and returns a tibble that defines the model equation: each column in the output is associated with one coefficient in the model.</p>
+</section>
+<section id="section-8" class="slide level2">
+<h2></h2>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">df &lt;-<span class="st"> </span><span class="kw">tribble</span>(
+  ~y, ~x1, ~x2,
+  <span class="dv">4</span>, <span class="dv">2</span>, <span class="dv">5</span>,
+  <span class="dv">5</span>, <span class="dv">1</span>, <span class="dv">6</span>
+)
+<span class="kw">model_matrix</span>(df, y ~<span class="st"> </span>x1)</code></pre></div>
+<pre><code>## # A tibble: 2 × 2
+##   `(Intercept)`    x1
+##           &lt;dbl&gt; &lt;dbl&gt;
+## 1             1     2
+## 2             1     1</code></pre>
+</section>
+<section id="section-9" class="slide level2">
+<h2></h2>
+<p>The model matrix grows in an unsurprising way when you add more variables to the the model:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">model_matrix</span>(df, y ~<span class="st"> </span>x1 +<span class="st"> </span>x2)</code></pre></div>
+<pre><code>## # A tibble: 2 × 3
+##   `(Intercept)`    x1    x2
+##           &lt;dbl&gt; &lt;dbl&gt; &lt;dbl&gt;
+## 1             1     2     5
+## 2             1     1     6</code></pre>
+</section>
+<section id="categorical-variables" class="slide level2">
+<h2>Categorical variables</h2>
+<p>Generating a function from a formula is straight forward when the predictor is continuous, but things get a bit more complicated when the predictor is categorical. Imagine you have a formula like <code>y ~ sex</code>, where sex could either be male or female. It doesn’t make sense to convert that to a formula like <code>y = x_0 + x_1 * sex</code> because <code>sex</code> isn’t a number - you can’t multiply it! Instead what R does is convert it to <code>y = x_0 + x_1 * sex_male</code> where <code>sex_male</code> is one if <code>sex</code> is male and zero otherwise:</p>
+</section>
+<section id="categorical-variables-1" class="slide level2">
+<h2>Categorical variables</h2>
+<p>Here’s the <code>sim2</code> dataset from modelr:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(sim2) +<span class="st"> </span>
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(x, y))</code></pre></div>
+<p><img src="slides_model_basics_files/figure-revealjs/unnamed-chunk-24-1.png" width="576" /></p>
+</section>
+<section id="categorical-variables-2" class="slide level2">
+<h2>Categorical variables</h2>
+<p>We can fit a model to it, and generate predictions:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">mod2 &lt;-<span class="st"> </span><span class="kw">lm</span>(y ~<span class="st"> </span>x, <span class="dt">data =</span> sim2)
+
+grid &lt;-<span class="st"> </span>sim2 %&gt;%<span class="st"> </span>
+<span class="st">  </span><span class="kw">data_grid</span>(x) %&gt;%<span class="st"> </span>
+<span class="st">  </span><span class="kw">add_predictions</span>(mod2)
+grid</code></pre></div>
+<pre><code>## # A tibble: 4 × 2
+##       x     pred
+##   &lt;chr&gt;    &lt;dbl&gt;
+## 1     a 1.152166
+## 2     b 8.116039
+## 3     c 6.127191
+## 4     d 1.910981</code></pre>
+</section>
+<section id="section-10" class="slide level2">
+<h2></h2>
+<p>Effectively, a model with a categorical <code>x</code> will predict the mean value for each category:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">ggplot</span>(sim2, <span class="kw">aes</span>(x)) +<span class="st"> </span>
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="kw">aes</span>(<span class="dt">y =</span> y)) +
+<span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data =</span> grid, <span class="kw">aes</span>(<span class="dt">y =</span> pred), <span class="dt">colour =</span> <span class="st">&quot;red&quot;</span>, <span class="dt">size =</span> <span class="dv">4</span>)</code></pre></div>
+<p><img src="slides_model_basics_files/figure-revealjs/unnamed-chunk-26-1.png" width="576" /></p>
+</section>
+
+  <!--
+  To hide progress bar from entire presentation
+  just remove “progress” element.
+  -->
+  <!-- <div class="progress"></div> -->
+  <script src="slides_model_basics_files\rmdshower/node_modules/shower/node_modules/shower-core/shower.min.js"></script>
+  <!-- Copyright © 2015 Yours Truly, Famous Inc. -->
+  <!-- Photos by John Carey, fiftyfootshadows.net -->
+
+    <script>renderMathInElement(document.body);</script>
+  
+  
+</body>
+</html>
